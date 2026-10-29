@@ -344,8 +344,8 @@ body{padding-top:calc(var(--recipe-panel-height) + 20px)}
 .quick-food-adjust button{width:27px;height:27px;flex:none;border:1px solid #d5e1cd;background:#f4f8ef;border-radius:8px;color:var(--ink);font-size:17px;line-height:1;padding:0}
 .quick-recipe[hidden],.recipe-launcher[hidden]{display:none}
 .recipe-collapse{border:1px solid #c5d4bd;background:#fff;border-radius:8px;padding:5px 10px;color:var(--green);font-size:11px;white-space:nowrap}
-.recipe-launcher{position:fixed;right:12px;top:max(8px,env(safe-area-inset-top));z-index:20;border:1px solid #245c42;border-radius:24px;padding:10px 16px;background:var(--green-dark);color:#fff;box-shadow:0 8px 28px #183b3033;font-size:12px;font-weight:650}
-body.recipe-collapsed{padding-top:48px}
+.recipe-launcher{position:fixed;right:max(12px,env(safe-area-inset-right));top:auto;bottom:max(16px,env(safe-area-inset-bottom));z-index:20;border:1px solid #245c42;border-radius:24px;padding:10px 16px;background:var(--green-dark);color:#fff;box-shadow:0 8px 28px #183b3033;font-size:12px;font-weight:650}
+body.recipe-collapsed{padding-top:0}
 @media(max-width:800px){
  :root{--recipe-panel-height:min(34dvh,276px)}
  .quick-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
@@ -473,7 +473,7 @@ document.getElementById('closeNutritionDialog').addEventListener('click',()=>doc
 
 const APP_VERSION='1.0.13';
 const RELEASES=[
- {version:'1.0.13',date:'2026-10-30',items:['移动端每日参考量对照压缩营养素行高，将来源贡献铺满整行，减少窄列换行。','每个来源名称与数值保持在一起，缩减字号、行距与上下留白，保留全部贡献数据。']},
+ {version:'1.0.13',date:'2026-10-30',items:['移动端每日参考量对照压缩营养素行高，将来源贡献铺满整行，减少窄列换行。','每个来源名称与数值保持在一起，缩减字号、行距与上下留白，保留全部贡献数据。','快速调整展开按钮移至右下角，点击浮窗外空白处自动收起；操作控件与弹窗不会误收起。']},
  {version:'1.0.12',date:'2026-10-30',items:['新增海鱼品类，以生的养殖大西洋三文鱼为参考，按去骨可食鱼肉生重计算；所有人群默认 25 g。','新增 Omega-3（EPA+DHA）含量、250 mg 成人每日目标和食物来源排名。','保留页面顶部完整的食物与补剂方案，新增可展开、收起的顶部悬浮快速调整窗口。','快速调整仅保留同行图标、名称、份量，以及滑块和加减按钮；两处份量与营养计算实时同步。']},
  {version:'1.0.9',date:'2026-10-29',items:['小炜、静静资料卡的各项营养指标将目标值、当前值与百分比合并为同一行，保留进度条。','顶部小炜、静静资料卡在手机端保持同一行双列，卡内营养指标纵向排列，优化窄屏文字和按钮间距。','优化手机端 01 食物与补剂方案：480px 及以下保持每行两个品类，六种品类显示为三行。','压缩卡片间距、图标和输入控件，数量与加减按钮可换行，避免窄屏卡片内容溢出。']},
  {version:'1.0.8',date:'2026-10-29',items:['每日参考量对照新增排序选择：默认顺序（蛋白质、维生素、矿物质的原始顺序）或按相对缺口从大到小排序。','首次使用采用默认顺序，自动记住排序选择；调整份量、切换人群或筛选分类时沿用所选排序方式，保留彩色来源贡献条形图。']},
@@ -527,6 +527,12 @@ try{const saved=localStorage.getItem('nutrition-recipe-open');if(saved!==null)re
 setRecipeOpen(recipeOpen,{save:false});
 collapseRecipe.addEventListener('click',()=>setRecipeOpen(false,{focus:true}));
 expandRecipe.addEventListener('click',()=>setRecipeOpen(true,{focus:true}));
+document.addEventListener('click',e=>{
+ if(recipePanel.hidden||recipePanel.contains(e.target)||expandRecipe.contains(e.target))return;
+ if(e.target.closest('button,input,select,textarea,a,label,summary,dialog,[role="button"],[contenteditable="true"]'))return;
+ setRecipeOpen(false);
+});
+
 recipePanel.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('nutritionDialog').open){e.preventDefault();setRecipeOpen(false,{focus:true})}});
 </script></body></html>
 

@@ -302,6 +302,22 @@ footer{padding:28px 4px 4px;font-size:11px}
  .person-goal,.person-percent{font-size:10px}
  .person-note{font-size:10px;line-height:1.6;overflow-wrap:anywhere}
 }
+/* Inline goal, current amount and completion in personal cards. */
+.person-summary{display:flex;align-items:baseline;justify-content:space-between;gap:5px;margin:8px 0;white-space:nowrap}
+.person-summary .person-goal{font-size:10px}
+.person-summary .person-current{font-size:12px;margin:0;font-weight:650;overflow-wrap:normal}
+.person-summary .person-percent{font-size:10px;margin:0}
+@media(max-width:750px){
+ .person-summary{gap:3px}
+ .person-summary .person-goal,.person-summary .person-percent{font-size:9px}
+ .person-summary .person-current{font-size:10px}
+}
+@media(max-width:360px){
+ .person-nutrient{padding:9px 5px}
+ .person-summary{gap:2px}
+ .person-summary .person-goal,.person-summary .person-percent{font-size:8px}
+ .person-summary .person-current{font-size:9px}
+}
 </style></head><body>
 <header><div class="brand"><i class="brand-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="17" fill="#203a31"/><path d="M17 39c0-17 12-24 31-23 1 20-7 32-23 30" fill="#b9d591"/><path d="M18 48 40 26" stroke="#f5f6f0" stroke-width="5" stroke-linecap="round"/><circle cx="46" cy="47" r="7" fill="#e1b675"/></svg></i>营养配比实验室</div><div class="header-tools"><span class="tag">NUTRITION · PORTION LAB</span><button class="version-button" id="openChangelog" aria-haspopup="dialog">v1.0.9 <span>更新日志 ↗</span></button></div></header>
 <main><section class="hero"><div><div class="eyebrow">YOUR DAILY NUTRIENT MIX</div><h1>调一调份量，看见营养变化。</h1><p class="subtitle">从一片维生素到一餐食物，实时计算你选中组合的营养贡献。</p></div><label class="profile">每日参考人群<select id="profile"><option value="xiaowei">小炜 · 26 岁 · 男性</option><option value="jingjing">静静 · 26 岁 · 女性</option><option value="19" selected>男性 · 19–30 岁</option><option value="31">男性 · 31–50 岁</option><option value="f19">女性 · 19–30 岁</option><option value="f31">女性 · 31–50 岁</option></select></label></section>
@@ -342,7 +358,7 @@ function renderPersonalCards(){
  container.innerHTML=Object.entries(personalProfiles).map(([id,p])=>{
  const protein=total('protein'),target=p.weight*p.proteinPerKg,vit=nutrientCompletion('vit',id),min=nutrientCompletion('min',id);
  const metrics=[{label:'蛋白质',goal:fmt(target)+' g',current:fmt(protein)+' g',pct:protein/target*100},{label:'维生素',goal:vit.target+' 种',current:vit.reached+' / '+vit.target+' 种达标',pct:vit.reached/vit.target*100},{label:'矿物质',goal:min.target+' 种',current:min.reached+' / '+min.target+' 种达标',pct:min.reached/min.target*100}];
- return `<article class="person-card ${selected===id?'person-active':''}" aria-label="${p.name}资料卡"><div class="person-head"><h2>${p.name}</h2><button type="button" class="person-select" data-person="${id}" aria-pressed="${selected===id}">${selected===id?'当前方案':'切换方案'}</button></div><div class="person-fields"><span>年龄 <b>${p.age} 岁</b></span><span>身高 <b>${p.height} cm</b></span><span>体重 <b>${p.weight} kg</b></span></div><div class="person-nutrients">${metrics.map(m=>`<section class="person-nutrient"><h3>${m.label}</h3><div class="person-goal">目标 <b>${m.goal}</b></div><div class="person-current">${m.current}</div><div class="person-percent">${fmt(m.pct)}%</div><div class="track"><div class="seg" style="background:var(--green);width:${Math.min(m.pct,100)}%"></div></div></section>`).join('')}</div><p class="person-note">当前方案 · 按${p.name}参考量比较；达到每日参考量计为达标。</p></article>`;
+ return `<article class="person-card ${selected===id?'person-active':''}" aria-label="${p.name}资料卡"><div class="person-head"><h2>${p.name}</h2><button type="button" class="person-select" data-person="${id}" aria-pressed="${selected===id}">${selected===id?'当前方案':'切换方案'}</button></div><div class="person-fields"><span>年龄 <b>${p.age} 岁</b></span><span>身高 <b>${p.height} cm</b></span><span>体重 <b>${p.weight} kg</b></span></div><div class="person-nutrients">${metrics.map(m=>`<section class="person-nutrient"><h3>${m.label}</h3><div class="person-summary"><div class="person-goal">目标 <b>${m.goal}</b></div><div class="person-current" aria-label="当前 ${m.current}" title="当前 ${m.current}">${m.current.replace(/ \/ /g,'/').replace(' 种达标','')}</div><div class="person-percent">${fmt(m.pct)}%</div></div><div class="track"><div class="seg" style="background:var(--green);width:${Math.min(m.pct,100)}%"></div></div></section>`).join('')}</div><p class="person-note">当前方案 · 按${p.name}参考量比较；达到每日参考量计为达标。</p></article>`;
  }).join('');
 }
 
@@ -386,7 +402,7 @@ document.getElementById('closeNutritionDialog').addEventListener('click',()=>doc
 
 const APP_VERSION='1.0.9';
 const RELEASES=[
- {version:'1.0.9',date:'2026-10-29',items:['顶部小炜、静静资料卡在手机端保持同一行双列，卡内营养指标纵向排列，优化窄屏文字和按钮间距。','优化手机端 01 食物与补剂方案：480px 及以下保持每行两个品类，六种品类显示为三行。','压缩卡片间距、图标和输入控件，数量与加减按钮可换行，避免窄屏卡片内容溢出。']},
+ {version:'1.0.9',date:'2026-10-29',items:['小炜、静静资料卡的各项营养指标将目标值、当前值与百分比合并为同一行，保留进度条。','顶部小炜、静静资料卡在手机端保持同一行双列，卡内营养指标纵向排列，优化窄屏文字和按钮间距。','优化手机端 01 食物与补剂方案：480px 及以下保持每行两个品类，六种品类显示为三行。','压缩卡片间距、图标和输入控件，数量与加减按钮可换行，避免窄屏卡片内容溢出。']},
  {version:'1.0.8',date:'2026-10-29',items:['每日参考量对照新增排序选择：默认顺序（蛋白质、维生素、矿物质的原始顺序）或按相对缺口从大到小排序。','首次使用采用默认顺序，自动记住排序选择；调整份量、切换人群或筛选分类时沿用所选排序方式，保留彩色来源贡献条形图。']},
  {version:'1.0.7',date:'2026-10-29',items:['每次切换每日参考人群或点击个人资料卡切换方案，自动恢复对应默认份量；小炜、静静采用各自预设和 Swisse 款式，普通人群采用通用默认份量。','当前方案仍支持手动调整、清零和刷新后恢复；切换回来时重新采用默认方案。']},
  {version:'1.0.6',date:'2026-10-29',items:['方案区新增清零按钮，一键将当前方案的全部食物与维生素片份量设为 0，并保存；其他个人方案不受影响，仍可恢复默认份量。','每日参考量对照按相对缺口（参考量 − 合计）／参考量从大到小排序，低于参考量的项目优先，达标项目随后；调整份量或参考人群后实时重排，保留彩色来源条形图。']},

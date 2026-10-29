@@ -344,8 +344,8 @@ body{padding-top:calc(var(--recipe-panel-height) + 20px)}
 .quick-food-adjust button{width:27px;height:27px;flex:none;border:1px solid #d5e1cd;background:#f4f8ef;border-radius:8px;color:var(--ink);font-size:17px;line-height:1;padding:0}
 .quick-recipe[hidden],.recipe-launcher[hidden]{display:none}
 .recipe-collapse{border:1px solid #c5d4bd;background:#fff;border-radius:8px;padding:5px 10px;color:var(--green);font-size:11px;white-space:nowrap}
-.recipe-launcher{position:fixed;right:12px;top:max(8px,env(safe-area-inset-top));z-index:20;border:1px solid #245c42;border-radius:24px;padding:10px 16px;background:var(--green-dark);color:#fff;box-shadow:0 8px 28px #183b3033;font-size:12px;font-weight:650}
-body.recipe-collapsed{padding-top:48px}
+.recipe-launcher{position:fixed;right:max(12px,env(safe-area-inset-right));top:auto;bottom:max(16px,env(safe-area-inset-bottom));z-index:20;border:1px solid #245c42;border-radius:24px;padding:10px 16px;background:var(--green-dark);color:#fff;box-shadow:0 8px 28px #183b3033;font-size:12px;font-weight:650}
+body.recipe-collapsed{padding-top:0}
 @media(max-width:800px){
  :root{--recipe-panel-height:min(34dvh,276px)}
  .quick-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
@@ -354,8 +354,36 @@ body.recipe-collapsed{padding-top:48px}
  .quick-food-name{font-size:11px}
  .full-recipe{padding:12px}
 }
+
+/* Compact mobile comparison: give source contributions the full row width. */
+.source-item{display:inline-block;white-space:nowrap}
+@media(max-width:650px){
+ .results .table-wrap{overflow-x:visible}
+ .results table{display:block;min-width:0;width:100%}
+ .results thead,.results tbody{display:block;width:100%}
+ .results tr{display:grid;grid-template-columns:minmax(100px,.9fr) minmax(0,1.4fr)}
+ .results thead tr{background:#f9faf6}
+ .results th{padding:8px 10px;font-size:10px;min-width:0}
+ .results th:nth-child(3){display:none}
+ .results td{min-width:0;border:0;padding:8px 10px 5px}
+ .results td:first-child{min-width:0;align-self:center}
+ .results tbody tr{border-bottom:1px solid #e8eee3}
+ .results .barcell{width:auto;min-width:0;align-self:center}
+ .results .nutrient-trigger{font-size:11px;line-height:1.35;padding:2px 0}
+ .results .nutrient-summary{gap:5px}
+ .results .nutrient-summary strong{font-size:12px}
+ .results .nutrient-summary .sub{font-size:9px}
+ .results .nutrient-percent{font-size:10px}
+ .results .nutrient-reference{font-size:9px;line-height:1.3;margin:3px 0 5px}
+ .results .track{height:4px}
+ .results .source-cell{grid-column:1/-1;max-width:none;padding:1px 10px 7px;font-size:9px;line-height:1.5;color:#68776f}
+ .results .source-cell:empty{display:none}
+ .results .source-item{white-space:nowrap;line-height:1.5}
+ .results .source-divider{color:#a2ada0}
+ .results .empty{grid-column:1/-1}
+}
 </style></head><body>
-<header><div class="brand"><i class="brand-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="17" fill="#203a31"/><path d="M17 39c0-17 12-24 31-23 1 20-7 32-23 30" fill="#b9d591"/><path d="M18 48 40 26" stroke="#f5f6f0" stroke-width="5" stroke-linecap="round"/><circle cx="46" cy="47" r="7" fill="#e1b675"/></svg></i>营养配比实验室</div><div class="header-tools"><span class="tag">NUTRITION · PORTION LAB</span><button class="version-button" id="openChangelog" aria-haspopup="dialog">v1.0.12 <span>更新日志 ↗</span></button></div></header>
+<header><div class="brand"><i class="brand-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="17" fill="#203a31"/><path d="M17 39c0-17 12-24 31-23 1 20-7 32-23 30" fill="#b9d591"/><path d="M18 48 40 26" stroke="#f5f6f0" stroke-width="5" stroke-linecap="round"/><circle cx="46" cy="47" r="7" fill="#e1b675"/></svg></i>营养配比实验室</div><div class="header-tools"><span class="tag">NUTRITION · PORTION LAB</span><button class="version-button" id="openChangelog" aria-haspopup="dialog">v1.0.13 <span>更新日志 ↗</span></button></div></header>
 <main><section class="hero"><div><div class="eyebrow">YOUR DAILY NUTRIENT MIX</div><h1>调一调份量，看见营养变化。</h1><p class="subtitle">从一片维生素到一餐食物，实时计算你选中组合的营养贡献。</p></div><label class="profile">每日参考人群<select id="profile"><option value="xiaowei">小炜 · 26 岁 · 男性</option><option value="jingjing">静静 · 26 岁 · 女性</option><option value="19" selected>男性 · 19–30 岁</option><option value="31">男性 · 31–50 岁</option><option value="f19">女性 · 19–30 岁</option><option value="f31">女性 · 31–50 岁</option></select></label></section>
 <section id="personalCards" class="personal-cards" aria-label="个人资料与营养目标" aria-live="polite" hidden></section>
 <div class="layout"><section class="food-zone full-recipe" aria-labelledby="foodZoneTitle"><div class="zone-head"><h2 id="foodZoneTitle">食物与补剂方案</h2></div><div class="controls" id="controls"></div></section><section aria-label="营养总览"><div class="zone-head overview-head"><div class="eyebrow">02 / NUTRIENTS</div><h2>营养总览</h2></div><div class="metrics" id="metrics" aria-live="polite"></div><div class="panel results"><div class="result-header"><div><h2>每日参考量对照</h2><p id="overview"></p></div><div class="legend"><span><i class="dot" style="background:#b96f36"></i>猪瘦肉</span><span><i class="dot" style="background:#317759"></i>小白菜</span><span><i class="dot" style="background:#74a15b"></i>菠菜</span><span><i class="dot" style="background:#8d72a2"></i>牛奶</span><span><i class="dot" style="background:#b09b45"></i>开心果</span><span><i class="dot" style="background:#5a79ad"></i><span id="vitaminLegend">Swisse 男士</span></span><span><i class="dot" style="background:#398fa0"></i>海鱼</span></div></div><div class="toolbar"><div class="tabs" role="group" aria-label="营养素分类"><button class="active" data-tab="all">全部</button><button data-tab="macro">蛋白质 / 脂肪酸</button><button data-tab="vit">维生素</button><button data-tab="min">矿物质</button></div><label class="sort-control">排序<select id="nutrientSort" aria-label="每日参考量对照排序方式"><option value="default">默认顺序</option><option value="gap">按缺口排序</option></select></label><label class="check"><input type="checkbox" id="below">仅看低于参考量</label></div><div class="table-wrap"><table><thead><tr><th>营养素</th><th>合计与参考量</th><th>来源贡献</th></tr></thead><tbody id="rows"></tbody></table></div></div></section></div>
@@ -429,7 +457,7 @@ function sortedNutrients(){if(nutrientSort==='default')return [...nutrients];ret
 function edibleAmount(i){return amounts[i]*(foods[i].id==='pistachio'?kernelRatio:1)}
 function total(key){return foods.reduce((s,f,i)=>s+(f.data[key]??0)*edibleAmount(i)/f.base,0)}
 function render(){syncQuickControls();savePersonalPlan();renderPersonalCards();document.getElementById('vitaminLegend').textContent=vitamin.short;renderFallback();document.getElementById('kernelNet').textContent='含壳 '+fmt(amounts[foods.findIndex(f=>f.id==="pistachio")])+' g ≈ 果仁 '+fmt(edibleAmount(foods.findIndex(f=>f.id==="pistachio")))+' g（用于营养计算）';document.getElementById('metrics').innerHTML=[['energy','热量','kcal'],['protein','蛋白质','g'],['fat','脂肪','g'],['fiber','膳食纤维','g']].map(([key,label,unit])=>`<button type="button" class="panel metric metric-trigger" data-ranking="${key}" aria-haspopup="dialog"><span>${label} ↗</span><b>${fmt(total(key))}<small>${unit}</small></b></button>`).join('');
-let html='',reached=0,complete=0;sortedNutrients().forEach(([key,name,unit,baseRef,type])=>{const ref=reference(key,baseRef);const values=foods.map((f,i)=>f.data[key]===undefined?null:f.data[key]*edibleAmount(i)/f.base);const unknown=values.some((v,i)=>v===null&&amounts[i]>0);const sum=values.reduce((s,v)=>s+(v??0),0),pct=sum/ref*100;if(!unknown){complete++;if(pct>=100)reached++}if(tab!=='all'&&tab!==type)return;if(document.getElementById('below').checked&&pct>=100)return;const ratio=pct>100?100/pct:1;html+=`<tr><td><button type="button" class="nutrient-trigger" data-ranking="${key}" aria-haspopup="dialog">${name}<span aria-hidden="true"> ↗</span></button>${unknown?'<span class="unknown">有来源数据未提供</span>':''}</td><td class="barcell"><div class="nutrient-summary"><strong>${fmt(sum)} <span class="sub">${unit}</span></strong><span class="nutrient-percent">${unknown?'≥ ':''}${fmt(pct)}%</span></div><div class="nutrient-reference">参考 ${fmt(ref)} ${unit}</div><div class="track">${values.map((v,i)=>`<div class="seg" style="background:${foods[i].color};width:${(v??0)/ref*100*ratio}%"></div>`).join('')}</div></td><td class="source-cell">${values.map((v,i)=>amounts[i]>0?`${foods[i].short} ${fmt(v??0)}${foods[i].zeroed.includes(key)?'*':''}`:'').filter(Boolean).join(' · ')}</td></tr>`});document.getElementById('rows').innerHTML=html||'<tr><td colspan="3" class="empty">当前筛选下没有营养素</td></tr>';document.getElementById('overview').textContent=`${nutrients.length} 项营养素 · ${reached} 项计算合计达到参考量（含按 0 处理项） · ${nutrientSort==='gap'?'按相对缺口从大到小排序':'默认顺序'}`;}
+let html='',reached=0,complete=0;sortedNutrients().forEach(([key,name,unit,baseRef,type])=>{const ref=reference(key,baseRef);const values=foods.map((f,i)=>f.data[key]===undefined?null:f.data[key]*edibleAmount(i)/f.base);const unknown=values.some((v,i)=>v===null&&amounts[i]>0);const sum=values.reduce((s,v)=>s+(v??0),0),pct=sum/ref*100;if(!unknown){complete++;if(pct>=100)reached++}if(tab!=='all'&&tab!==type)return;if(document.getElementById('below').checked&&pct>=100)return;const ratio=pct>100?100/pct:1;html+=`<tr><td><button type="button" class="nutrient-trigger" data-ranking="${key}" aria-haspopup="dialog">${name}<span aria-hidden="true"> ↗</span></button>${unknown?'<span class="unknown">有来源数据未提供</span>':''}</td><td class="barcell"><div class="nutrient-summary"><strong>${fmt(sum)} <span class="sub">${unit}</span></strong><span class="nutrient-percent">${unknown?'≥ ':''}${fmt(pct)}%</span></div><div class="nutrient-reference">参考 ${fmt(ref)} ${unit}</div><div class="track">${values.map((v,i)=>`<div class="seg" style="background:${foods[i].color};width:${(v??0)/ref*100*ratio}%"></div>`).join('')}</div></td><td class="source-cell">${values.map((v,i)=>amounts[i]>0?`<span class="source-item">${foods[i].short} ${fmt(v??0)}${foods[i].zeroed.includes(key)?'*':''}</span>`:'').filter(Boolean).join('<span class="source-divider" aria-hidden="true"> · </span>')}</td></tr>`});document.getElementById('rows').innerHTML=html||'<tr><td colspan="3" class="empty">当前筛选下没有营养素</td></tr>';document.getElementById('overview').textContent=`${nutrients.length} 项营养素 · ${reached} 项计算合计达到参考量（含按 0 处理项） · ${nutrientSort==='gap'?'按相对缺口从大到小排序':'默认顺序'}`;}
 
 function standardServing(i){const f=foods[i];return {amount:f.unit==='片'?1:100,unit:f.unit};}
 function servingNutrient(i,key,kernelOnly=false){const f=foods[i],serving=standardServing(i);const fraction=f.id==='pistachio'&&!kernelOnly?kernelRatio:1;return (f.data[key]??0)*serving.amount*fraction/f.base;}
@@ -443,8 +471,9 @@ let note='* 表示无法确认、按 0 计入的项目，不代表真实含量�
 try{const savedProfile=localStorage.getItem('nutrition-profile');if(['19','31','f19','f31','xiaowei','jingjing'].includes(savedProfile))document.getElementById('profile').value=savedProfile}catch(e){}activePlan=document.getElementById('profile').value;loadPersonalPlan(activePlan);controls();render();document.getElementById('controls').addEventListener('click',e=>{const detail=e.target.closest('[data-details]');if(detail){openNutritionDialog(Number(detail.dataset.details));return}const b=e.target.closest('button');if(!b){const card=e.target.closest('[data-food]');if(card&&!e.target.closest('input,select,label'))openNutritionDialog(Number(card.dataset.food));return}if(b.id==='clear'){clearPlan();return}if(b.id==='reset'){if(personalProfiles[activePlan]){loadPersonalPlan(activePlan,true);controls();render()}else{foods.forEach((f,i)=>setAmount(i,f.initial))}return}const i=Number(b.dataset.i);if(b.dataset.set!==undefined)setAmount(i,Number(b.dataset.set));if(b.dataset.delta!==undefined)setAmount(i,amounts[i]+Number(b.dataset.delta));});document.getElementById('controls').addEventListener('input',e=>{if(e.target.type==='range')setAmount(Number(e.target.dataset.i),Number(e.target.value));});document.getElementById('controls').addEventListener('change',e=>{if(e.target.id==='vitaminKind'){vitaminKind=e.target.value==='women'?'women':'men';applyVitamin();try{localStorage.setItem('nutrition-vitamin-kind',vitaminKind)}catch(e){}controls();render();return}if(e.target.id==='kernelYield'){const r=Number(e.target.value);if(Number.isFinite(r)){kernelRatio=Math.min(100,Math.max(1,r))/100;e.target.value=Math.round(kernelRatio*100);try{localStorage.setItem('nutrition-kernel-ratio',String(kernelRatio))}catch(e){}render()}return}if(e.target.type==='number')setAmount(Number(e.target.dataset.i),Number(e.target.value));});document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(t=>t.classList.toggle('active',t===b));render()}));document.getElementById('below').addEventListener('change',render);document.getElementById('nutrientSort').addEventListener('change',e=>{nutrientSort=e.target.value==='gap'?'gap':'default';try{localStorage.setItem('nutrition-nutrient-sort',nutrientSort)}catch(e){}render()});function saveProfileAndRender(){savePersonalPlan();activePlan=document.getElementById('profile').value;if(personalProfiles[activePlan]){loadPersonalPlan(activePlan,true)}else{amounts=foods.map(f=>f.initial)}try{localStorage.setItem('nutrition-portions-v2',JSON.stringify(Object.fromEntries(foods.map((f,i)=>[f.id,amounts[i]]))))}catch(e){}controls();try{localStorage.setItem('nutrition-profile',document.getElementById('profile').value)}catch(e){}render()}document.getElementById('profile').addEventListener('change',saveProfileAndRender);document.getElementById('personalCards').addEventListener('click',e=>{const b=e.target.closest('[data-person]');if(b&&personalProfiles[b.dataset.person]){document.getElementById('profile').value=b.dataset.person;saveProfileAndRender()}});
 document.getElementById('closeNutritionDialog').addEventListener('click',()=>document.getElementById('nutritionDialog').close());document.getElementById('nutritionDialog').addEventListener('click',e=>{if(e.target===e.currentTarget){const box=e.currentTarget.getBoundingClientRect();if(e.clientX<box.left||e.clientX>box.right||e.clientY<box.top||e.clientY>box.bottom)e.currentTarget.close()}});
 
-const APP_VERSION='1.0.12';
+const APP_VERSION='1.0.13';
 const RELEASES=[
+ {version:'1.0.13',date:'2026-10-30',items:['移动端每日参考量对照压缩营养素行高，将来源贡献铺满整行，减少窄列换行。','每个来源名称与数值保持在一起，缩减字号、行距与上下留白，保留全部贡献数据。','快速调整展开按钮移至右下角，点击浮窗外空白处自动收起；操作控件与弹窗不会误收起。']},
  {version:'1.0.12',date:'2026-10-30',items:['新增海鱼品类，以生的养殖大西洋三文鱼为参考，按去骨可食鱼肉生重计算；所有人群默认 25 g。','新增 Omega-3（EPA+DHA）含量、250 mg 成人每日目标和食物来源排名。','保留页面顶部完整的食物与补剂方案，新增可展开、收起的顶部悬浮快速调整窗口。','快速调整仅保留同行图标、名称、份量，以及滑块和加减按钮；两处份量与营养计算实时同步。']},
  {version:'1.0.9',date:'2026-10-29',items:['小炜、静静资料卡的各项营养指标将目标值、当前值与百分比合并为同一行，保留进度条。','顶部小炜、静静资料卡在手机端保持同一行双列，卡内营养指标纵向排列，优化窄屏文字和按钮间距。','优化手机端 01 食物与补剂方案：480px 及以下保持每行两个品类，六种品类显示为三行。','压缩卡片间距、图标和输入控件，数量与加减按钮可换行，避免窄屏卡片内容溢出。']},
  {version:'1.0.8',date:'2026-10-29',items:['每日参考量对照新增排序选择：默认顺序（蛋白质、维生素、矿物质的原始顺序）或按相对缺口从大到小排序。','首次使用采用默认顺序，自动记住排序选择；调整份量、切换人群或筛选分类时沿用所选排序方式，保留彩色来源贡献条形图。']},
@@ -498,6 +527,12 @@ try{const saved=localStorage.getItem('nutrition-recipe-open');if(saved!==null)re
 setRecipeOpen(recipeOpen,{save:false});
 collapseRecipe.addEventListener('click',()=>setRecipeOpen(false,{focus:true}));
 expandRecipe.addEventListener('click',()=>setRecipeOpen(true,{focus:true}));
+document.addEventListener('click',e=>{
+ if(recipePanel.hidden||recipePanel.contains(e.target)||expandRecipe.contains(e.target))return;
+ if(e.target.closest('button,input,select,textarea,a,label,summary,dialog,[role="button"],[contenteditable="true"]'))return;
+ setRecipeOpen(false);
+});
+
 recipePanel.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('nutritionDialog').open){e.preventDefault();setRecipeOpen(false,{focus:true})}});
 </script></body></html>
 
